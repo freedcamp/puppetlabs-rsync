@@ -18,7 +18,13 @@ class rsync::server(
 
   $conf_file = $::osfamily ? {
     'Debian' => '/etc/rsyncd.conf',
+    'RedHat' => '/etc/rsyncd.conf',
     default  => '/etc/rsync.conf',
+  }
+
+   $servicename = $::osfamily ? {
+    'RedHat' => 'rsyncd',
+    default  => 'rsync',
   }
 
   if $use_xinetd {
@@ -40,7 +46,7 @@ class rsync::server(
       true  => 'running',
       false => 'stopped'
     }
-    service { 'rsync':
+    service { $servicename:
       ensure     => $ensure,
       enable     => true,
       hasstatus  => true,
